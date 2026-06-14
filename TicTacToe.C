@@ -1,6 +1,10 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<windows.h>//to refresh display and clear screen
+#define ANSI_COLOR_RED     "\x1b[31m"
+#define ANSI_COLOR_GREEN   "\x1b[32m"
+#define ANSI_COLOR_YELLOW  "\x1b[33m"
+#define ANSI_COLOR_RESET   "\x1b[0m"
 
 //board
 char board[3][3]={
@@ -69,14 +73,14 @@ int checkwin()
 }
 int main()
 {
-    printf("Let's Play Tic Tac Toe!\n");
+    printf("Let's Play TicTacToe!\n");
     drawboard();
     int row,column,move,status;
     int player=1;
     while(1)
     {
         player=(player%2)?1:2;
-        printf("Player %d: ",player);
+        printf("\nPlayer %d: ",player);
         scanf("%d",&move);
         //row and column chosen by the player
         row=(move-1)/3;
@@ -103,17 +107,17 @@ int main()
          status=checkwin();
          if(status==1)
          {
-            printf("\n");
+            system("cls");
             drawboard();
-            printf("player %d WINS!\n",player);
-            printf("player %d is a LOSER!\n",3-player);
+            printf(ANSI_COLOR_GREEN "Player %d WINS!" ANSI_COLOR_RESET "\n",player);
+            printf(ANSI_COLOR_RED "Player %d is a LOSER!" ANSI_COLOR_RESET "\n",3-player);
             break;
          }
          if(status==2)
          {
-            printf("\n");
+            system("cls");
             drawboard();
-            printf("It's a Draw!\n");
+            printf(ANSI_COLOR_YELLOW "It's a Draw!" ANSI_COLOR_RESET "\n");
             break;
          }
          player++;
