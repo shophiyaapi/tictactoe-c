@@ -1,10 +1,13 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<windows.h>//to refresh display and clear screen
-#define ANSI_COLOR_RED     "\x1b[31m"
-#define ANSI_COLOR_GREEN   "\x1b[32m"
-#define ANSI_COLOR_YELLOW  "\x1b[33m"
-#define ANSI_COLOR_RESET   "\x1b[0m"
+
+#define COLOR_RED     "\x1b[31m"//replaces COLOR_RED with the escape code for red color
+#define COLOR_GREEN   "\x1b[32m"
+#define COLOR_YELLOW  "\x1b[33m"
+#define RESET         "\x1b[0m"
+#define BOLD          "\x1b[1m"
+#define PINK          "\x1b[35m"
 
 //board
 char board[3][3]={
@@ -16,10 +19,10 @@ char board[3][3]={
 void drawboard(){
     for(int i=0;i<3;i++)
     {
-        printf(" %c  |  %c  |  %c\n",board[i][0],board[i][1],board[i][2]);
+        printf(BOLD" %c  |  %c  |  %c\n" ,board[i][0],board[i][1],board[i][2]);
         if(i!=2)
         {
-            printf("---------------\n");
+            printf("---------------\n" RESET);
         }
 
     }
@@ -62,6 +65,7 @@ int checkwin()
             if(board[i][j]!='X'&&board[i][j]!='O')
             {
                 count++;
+
             }
         }
     }
@@ -73,7 +77,7 @@ int checkwin()
 }
 int main()
 {
-    printf("Let's Play TicTacToe!\n");
+    printf(PINK "Let's Play TicTacToe!\n" RESET);
     drawboard();
     int row,column,move,status;
     int player=1;
@@ -109,15 +113,15 @@ int main()
          {
             system("cls");
             drawboard();
-            printf(ANSI_COLOR_GREEN "Player %d WINS!" ANSI_COLOR_RESET "\n",player);
-            printf(ANSI_COLOR_RED "Player %d is a LOSER!" ANSI_COLOR_RESET "\n",3-player);
+            printf(COLOR_GREEN "Player %d WINS!" RESET "\n",player);
+            printf(COLOR_RED "Player %d is a LOSER!" RESET "\n",3-player);
             break;
          }
          if(status==2)
          {
             system("cls");
             drawboard();
-            printf(ANSI_COLOR_YELLOW "It's a Draw!" ANSI_COLOR_RESET "\n");
+            printf(COLOR_YELLOW "It's a Draw!" RESET "\n");
             break;
          }
          player++;
