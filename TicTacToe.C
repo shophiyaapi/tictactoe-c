@@ -117,4 +117,5 @@ int main()
          }
          player++;
     }
+    system("pause");
 }
