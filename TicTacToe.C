@@ -1,4 +1,5 @@
 #include<stdio.h>
+#include<stdlib.h>
 #include<windows.h>//to refresh display and clear screen
 
 //board
@@ -118,4 +119,5 @@ int main()
          player++;
     }
     system("pause");
+
 }
