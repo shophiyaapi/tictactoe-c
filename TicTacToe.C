@@ -8,6 +8,9 @@
 #define RESET         "\x1b[0m"
 #define BOLD          "\x1b[1m"
 #define PINK          "\x1b[35m"
+#define blue          "\x1b[34m"
+#define cyan          "\x1b[36m"
+#define pink_slowblink "\x1b[5;35m"
 
 //board
 char board[3][3]={
@@ -77,7 +80,7 @@ int checkwin()
 }
 int main()
 {
-    printf(PINK "Let's Play TicTacToe!\n" RESET);
+    printf(pink_slowblink "Let's Play TicTacToe!\n" RESET);
     drawboard();
     int row,column,move,status;
     int player=1;
