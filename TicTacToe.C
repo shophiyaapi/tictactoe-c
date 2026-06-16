@@ -31,6 +31,7 @@ void drawboard(){
     }
 } 
 //for checking the current status of the game
+//return 1 for win and return 2 for draw  and return 0 for ongoing game 
 int checkwin()
 {
     int i=0,j=0;
@@ -120,7 +121,7 @@ do {
     drawboard();
     int row,column,move,status;
     int player=1;
-    while(1)
+    while(1) //loop running infiinitely until a brak statement is encountered
     {
         player=(player%2)?1:2;
         printf("\nPlayer %d: ",player);
