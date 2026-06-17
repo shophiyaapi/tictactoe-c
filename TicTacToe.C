@@ -88,36 +88,6 @@ void save_scores_to_file() ;
 
 int main()
 {
-    void init_board() {
-    char start_char = '1';
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            board[i][j] = start_char++;
-        }
-    }
-}
-
-void display_scoreboard() {
-    printf("\n" BOLD "=== CURRENT SCOREBOARD ===\n" RESET);
-    printf(cyan "Player 1 (X): %d wins\n" RESET, player1_wins);
-    printf(blue "Player 2 (O): %d wins\n" RESET, player2_wins);
-    printf(COLOR_YELLOW "Draws       : %d\n" RESET, draws);
-    printf("==========================\n");
-}
-
-void save_scores_to_file() {
-    FILE *file = fopen("tictactoe_scores.txt", "w");
-    if (file == NULL) {
-        printf(COLOR_RED "Error saving scores to file!\n" RESET);
-        return;
-    }
-    fprintf(file, "=== TIC-TAC-TOE MATCH SUMMARY ===\n");
-    fprintf(file, "Player 1 (X) Wins: %d\n", player1_wins);
-    fprintf(file, "Player 2 (O) Wins: %d\n", player2_wins);
-    fprintf(file, "Total Draws       : %d\n", draws);
-    fclose(file);
-    printf(COLOR_GREEN "\nScores successfully saved to 'tictactoe_scores.txt'!\n" RESET);
-}
     char replay_choice;
 do 
 {
@@ -134,7 +104,7 @@ do
         printf("\nPlayer %d: ",player);
         scanf("%d",&move);
         //row and column chosen by the player
-        if(move>=1 && move)
+        if(move>=1 && move<=9)
         {
         row=(move-1)/3;
         column=(move-1)%3;
