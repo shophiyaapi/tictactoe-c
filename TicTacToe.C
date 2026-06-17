@@ -122,13 +122,22 @@ do
     display_scoreboard(); // Shows the live scores
     printf(pink_slowblink "Let's Play TicTacToe!\n" RESET);
     drawboard();
-    int row,column,move,status;
+    int row,column,status;
+    int move =0; //to avoid garbage value
     int player=1;
     while(1) //loop running infiinitely until a brak statement is encountered
     {
         player=(player%2)?1:2;
         printf("\nPlayer %d: ",player);
-        scanf("%d",&move);
+        if(scanf("%d",&move)!=1)
+        {
+            printf(COLOR_RED "Invalid input ! Please enter a number between 1 and 9 \n" RESET);
+            while(getchar()!='\n');
+            system("pause");
+            system("cls");
+            drawboard();
+            continue;
+        }
         //row and column chosen by the player
         if(move>=1 && move<=9)
         {
@@ -146,19 +155,13 @@ do
                 board[row][column]='O';
             }
         }
-        else 
-        {
-           printf(COLOR_RED"That cell is already occupied ! Try Again.\n" RESET);
-           player--;
-           system("pause");
-           continue;
-        }
        }
         else
         {
             printf(COLOR_RED "Invalid move! Try Again.\n" RESET);
             player--;//so that the increment doesnt change the player
             system("pause");
+            system("cls");
             continue;
         }
         system("cls");//to refresh the board
