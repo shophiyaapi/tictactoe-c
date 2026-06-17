@@ -79,15 +79,11 @@ int checkwin()
     }
     return 0;
 }
+//score tracking variables
 int player1_wins = 0;
 int player2_wins = 0;
 int draws = 0;
-void init_board() ;
-void display_scoreboard() ;
-void save_scores_to_file() ;
-
-int main()
-{
+ //board reset for new rounds 
     void init_board() 
     {
     char start_char = '1';
@@ -99,7 +95,7 @@ int main()
         }
     }
    }
-
+//live console scoreboard
 void display_scoreboard() {
     printf("\n" BOLD "=== CURRENT SCOREBOARD ===\n" RESET);
     printf(cyan "Player 1 (X): %d wins\n" RESET, player1_wins);
@@ -107,22 +103,17 @@ void display_scoreboard() {
     printf(COLOR_YELLOW "Draws       : %d\n" RESET, draws);
     printf("==========================\n");
 }
-
-void save_scores_to_file() 
+int main()
 {
-    FILE *file = fopen("tictactoe_scores.txt", "w");
+//file i/o score tracking 
+    FILE *file;
+    file=fopen("tictactoe_scores.txt", "w");
     if (file == NULL) 
     {
         printf(COLOR_RED "Error saving scores to file!\n" RESET);
-        return;
+        return 1;
     }
-    fprintf(file, "=== TIC-TAC-TOE MATCH SUMMARY ===\n");
-    fprintf(file, "Player 1 (X) Wins: %d\n", player1_wins);
-    fprintf(file, "Player 2 (O) Wins: %d\n", player2_wins);
-    fprintf(file, "Total Draws       : %d\n", draws);
-    fclose(file);
-    printf(COLOR_GREEN "\nScores successfully saved to 'tictactoe_scores.txt'!\n" RESET);
-}
+
     char replay_choice;
 do 
 {
@@ -193,7 +184,12 @@ do
 
  while (replay_choice == 'y' || replay_choice == 'Y');
   {
-    save_scores_to_file();
+    fprintf(file, "=== TIC-TAC-TOE MATCH SUMMARY ===\n");
+    fprintf(file, "Player 1 (X) Wins: %d\n", player1_wins);
+    fprintf(file, "Player 2 (O) Wins: %d\n", player2_wins);
+    fprintf(file, "Total Draws       : %d\n", draws);
+    fclose(file);
+    printf(COLOR_GREEN "\nScores successfully saved to 'tictactoe_scores.txt'!\n" RESET);
     system("pause");
   }
   return 0;
