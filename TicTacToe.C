@@ -80,37 +80,39 @@ int checkwin()
     return 0;
 }
 //score tracking variables
-int player1_wins = 0;
-int player2_wins = 0;
-int draws = 0;
- //board reset for new rounds 
-    void init_board() 
+int player1_wins=0;
+int player2_wins=0;
+int draws=0;
+//board reset for new rounds
+void init_board();
+{
+    char start_char='1';
+    for(int i=0;i<3:i++)
     {
-    char start_char = '1';
-    for (int i = 0; i < 3; i++) 
-    {
-        for (int j = 0; j < 3; j++) 
+        for(int j=0;j<3;;j++)
         {
-            board[i][j] = start_char++;
+            board[i][j]=start_char++;
+        
         }
     }
-   }
+}
 //live console scoreboard
-void display_scoreboard() {
-    printf("\n" BOLD "=== CURRENT SCOREBOARD ===\n" RESET);
-    printf(cyan "Player 1 (X): %d wins\n" RESET, player1_wins);
-    printf(blue "Player 2 (O): %d wins\n" RESET, player2_wins);
-    printf(COLOR_YELLOW "Draws       : %d\n" RESET, draws);
-    printf("==========================\n");
+void display_scoreboard()
+{
+    printf("\n"BOLD"=== CURRENT SCOREBOARD ===\n"RESET);
+    printf(cyan "Player 1 (X):%d wins\n" RESET ,player1_wins);
+    printf(blue "Player 2 (O):%d wins\n" RESET,player2_wins);
+    printf(COLOR_YELLOW "Draws    :%d\n" RESET,draws);
+    printf("============================\n");
 }
 int main()
 {
-//file i/o score tracking 
+//file i/o score tracking
     FILE *file;
-    file=fopen("tictactoe_scores.txt", "w");
-    if (file == NULL) 
+    file=fopen("tictactoe_scores.txt","w");
+    if (file==NULL) 
     {
-        printf(COLOR_RED "Error saving scores to file!\n" RESET);
+        printf(COLOR_RED"Error saving scores to file!\n" RESET);
         return 1;
     }
 
@@ -131,7 +133,7 @@ do
         printf("\nPlayer %d: ",player);
         if(scanf("%d",&move)!=1)
         {
-            printf(COLOR_RED "Invalid input ! Please enter a number between 1 and 9 \n" RESET);
+            printf(COLOR_RED"Invalid input!Please enter a number between 1 and 9 \n"RESET);
             while(getchar()!='\n');
             system("pause");
             system("cls");
@@ -171,9 +173,9 @@ do
          {
             system("cls");
             drawboard();
-            printf(COLOR_GREEN "Player %d WINS!" RESET "\n",player);
-            printf(COLOR_RED "Player %d is a LOSER!" RESET "\n",3-player);
-            if (player == 1) 
+            printf(COLOR_GREEN "Player %d WINS!"RESET "\n",player);
+            printf(COLOR_RED "Player %d is a LOSER!"RESET "\n",3-player);
+            if (player==1) 
             {
                 player1_wins++;
             }
@@ -187,25 +189,25 @@ do
          {
             system("cls");
             drawboard();
-            printf(COLOR_YELLOW "It's a Draw!" RESET "\n");
+            printf(COLOR_YELLOW "It's a Draw!" RESET"\n");
             draws++;
             break;
          }
          player++;
         } //end of inner while(1) loop
-         printf("\n Do you want to play another round? (y/n): ");
-    fflush(stdin); 
-    scanf(" %c", &replay_choice);
+         printf("\n Do you want to play another round?(y/n):");
+      fflush(stdin); 
+    scanf("%c",&replay_choice);
    }
 
- while (replay_choice == 'y' || replay_choice == 'Y');
+ while (replay_choice=='y'|| replay_choice=='Y');
   {
-    fprintf(file, "=== TIC-TAC-TOE MATCH SUMMARY ===\n");
-    fprintf(file, "Player 1 (X) Wins: %d\n", player1_wins);
-    fprintf(file, "Player 2 (O) Wins: %d\n", player2_wins);
-    fprintf(file, "Total Draws       : %d\n", draws);
+    fprintf(file,"=== TIC-TAC-TOE MATCH SUMMARY ===\n");
+    fprintf(file,"Player 1(X)Wins: %d\n",player1_wins);
+    fprintf(file,"Player 2(O)Wins: %d\n",player2_wins);
+    fprintf(file,"Total Draws       : %d\n",draws);
     fclose(file);
-    printf(COLOR_GREEN "\n Scores successfully saved to 'tictactoe_scores.txt'!\n" RESET);
+    printf(COLOR_GREEN"\n Scores successfully saved to'tictactoe_scores.txt'!\n"RESET);
     system("pause");
   }
   return 0;
