@@ -146,10 +146,17 @@ do
                 board[row][column]='O';
             }
         }
+        else 
+        {
+           printf(COLOR_RED"That cell is already occupied ! Try Again.\n" RESET);
+           player--;
+           system("pause");
+           continue;
+        }
        }
         else
         {
-            printf("Invalid move! Try Again.\n");
+            printf(COLOR_RED "Invalid move! Try Again.\n" RESET);
             player--;//so that the increment doesnt change the player
             system("pause");
             continue;
@@ -163,8 +170,14 @@ do
             drawboard();
             printf(COLOR_GREEN "Player %d WINS!" RESET "\n",player);
             printf(COLOR_RED "Player %d is a LOSER!" RESET "\n",3-player);
-            if (player == 1) player1_wins++;
-             else player2_wins++;
+            if (player == 1) 
+            {
+                player1_wins++;
+            }
+            else
+            {
+                player2_wins++;
+            }
             break;
          }
          if(status==2)
@@ -177,7 +190,7 @@ do
          }
          player++;
         } //end of inner while(1) loop
-         printf("\nDo you want to play another round? (y/n): ");
+         printf("\n Do you want to play another round? (y/n): ");
     fflush(stdin); 
     scanf(" %c", &replay_choice);
    }
@@ -189,7 +202,7 @@ do
     fprintf(file, "Player 2 (O) Wins: %d\n", player2_wins);
     fprintf(file, "Total Draws       : %d\n", draws);
     fclose(file);
-    printf(COLOR_GREEN "\nScores successfully saved to 'tictactoe_scores.txt'!\n" RESET);
+    printf(COLOR_GREEN "\n Scores successfully saved to 'tictactoe_scores.txt'!\n" RESET);
     system("pause");
   }
   return 0;
