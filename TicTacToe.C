@@ -129,18 +129,8 @@ do
     {
         player=(player%2)?1:2;
         printf("\nPlayer %d: ",player);
-        if(scanf("%d",&move)!=1)
-        {
-            printf(COLOR_RED "Invalid input ! Please enter a number between 1 and 9 \n" RESET);
-            while(getchar()!='\n');
-            system("pause");
-            system("cls");
-            drawboard();
-            continue;
-        }
+        scanf("%d",&move);
         //row and column chosen by the player
-        if(move>=1 && move<=9)
-        {
         row=(move-1)/3;
         column=(move-1)%3;
         //checking wether the move is valid
@@ -155,14 +145,11 @@ do
                 board[row][column]='O';
             }
         }
-       }
         else
         {
             printf(COLOR_RED "Invalid move! Try Again.\n" RESET);
             player--;//so that the increment doesnt change the player
             system("pause");
-            system("cls");
-            continue;
         }
         system("cls");//to refresh the board
         drawboard();
@@ -192,12 +179,11 @@ do
             break;
          }
          player++;
-        } //end of inner while(1) loop
-         printf("\n Do you want to play another round? (y/n): ");
+    } //end of inner while(1) loop
+    printf("\n Do you want to play another round? (y/n): ");
     fflush(stdin); 
     scanf(" %c", &replay_choice);
-   }
-
+}
  while (replay_choice == 'y' || replay_choice == 'Y');
   {
     fprintf(file, "=== TIC-TAC-TOE MATCH SUMMARY ===\n");
