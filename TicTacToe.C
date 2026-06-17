@@ -82,7 +82,13 @@ int checkwin()
 int player1_wins = 0;
 int player2_wins = 0;
 int draws = 0;
-void init_board() {
+void init_board() ;
+void display_scoreboard() ;
+void save_scores_to_file() ;
+
+int main()
+{
+    void init_board() {
     char start_char = '1';
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
@@ -90,6 +96,7 @@ void init_board() {
         }
     }
 }
+
 void display_scoreboard() {
     printf("\n" BOLD "=== CURRENT SCOREBOARD ===\n" RESET);
     printf(cyan "Player 1 (X): %d wins\n" RESET, player1_wins);
@@ -97,6 +104,7 @@ void display_scoreboard() {
     printf(COLOR_YELLOW "Draws       : %d\n" RESET, draws);
     printf("==========================\n");
 }
+
 void save_scores_to_file() {
     FILE *file = fopen("tictactoe_scores.txt", "w");
     if (file == NULL) {
@@ -110,10 +118,9 @@ void save_scores_to_file() {
     fclose(file);
     printf(COLOR_GREEN "\nScores successfully saved to 'tictactoe_scores.txt'!\n" RESET);
 }
-int main()
-{
     char replay_choice;
-do {
+do 
+{
     init_board(); // Clears board array for a new match
     system("cls");
     display_scoreboard(); // Shows the live scores
@@ -127,6 +134,8 @@ do {
         printf("\nPlayer %d: ",player);
         scanf("%d",&move);
         //row and column chosen by the player
+        if(move>=1 && move)
+        {
         row=(move-1)/3;
         column=(move-1)%3;
         //checking wether the move is valid
@@ -141,6 +150,7 @@ do {
                 board[row][column]='O';
             }
         }
+       }
         else
         {
             printf("Invalid move! Try Again.\n");
@@ -171,10 +181,10 @@ do {
          printf("\nDo you want to play another round? (y/n): ");
     fflush(stdin); 
     scanf(" %c", &replay_choice);
+   } 
 
-} while (replay_choice == 'y' || replay_choice == 'Y');
-    }
+while (replay_choice == 'y' || replay_choice == 'Y');
     save_scores_to_file();
     system("pause");
-
+    return 0;
 }
