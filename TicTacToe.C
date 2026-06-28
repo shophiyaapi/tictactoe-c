@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<windows.h>//to refresh display and clear screen
+#include<string.h>
 
 #define COLOR_RED     "\x1b[31m"//replaces COLOR_RED with the escape code for red color
 #define COLOR_GREEN   "\x1b[32m"
@@ -11,7 +12,8 @@
 #define blue          "\x1b[34m"
 #define cyan          "\x1b[36m"
 #define pink_slowblink "\x1b[5;35m"
-
+#define CENTER_PADDING "                                                             "
+//Helper macro for centering (adjusting spaces to push everything to the center)
 //board
 char board[3][3]={
     {'1','2','3'},
@@ -83,27 +85,74 @@ int checkwin()
 int player1_wins=0;
 int player2_wins=0;
 int draws=0;
+//New global variables for custom names 
+char player1_name[50];
+char player2_name[50];
+// higher score tracking variables
+char top_player_name[50]="None";
+int top_player_wins=0;
 //board reset for new rounds
-void init_board();
+void init_board()
 {
     char start_char='1';
-    for(int i=0;i<3:i++)
+    for(int i=0;i<3;i++)
     {
-        for(int j=0;j<3;;j++)
+        for(int j=0;j<3;j++)
         {
             board[i][j]=start_char++;
         
         }
     }
 }
+//Centered version of drawboard 
+void drawboard_centered(){
+    for(int i=0;i<3;i++)
+    {
+        printf("CENTER_PADDING" BOLD "%c | %c | %c \n",board[i][0],board[i][1],board[i][2]);
+            if(i!=2){
+            printf(CENTER_PADDING "---------------\n" RESET);
+            } 
+    }
+}
+ //Function to handle the persistent all-time high score
+ void handle_high_score(char* current_winner,int current_winner_wins){
+    //try to read the existing all time high score 
+    FILE* file;
+    file=fopen("tictactoe_highscore.txt","r");
+    if(file!=NULL){
+        fscanf(file,"%s %d",top_player_name,&top_player_wins);
+        fclose(file);
+    }
+//check the if current winner broke the record 
+if(current_winner_wins>top_player_wins){
+    top_player_wins=current_winner_wins;
+    strcpy(top_player_name,current_winner);
+    //save the new high score to the file
+    FILE* fp;
+    fp=fopen("tictactoe_highscore.txt","w");
+    if(fp!=NULL){
+        fprintf(fp,"%s %d",top_player_name,top_player_wins);
+        fclose(fp);
+    }
+    }
+ }
 //live console scoreboard
 void display_scoreboard()
 {
-    printf("\n"BOLD"=== CURRENT SCOREBOARD ===\n"RESET);
-    printf(cyan "Player 1 (X):%d wins\n" RESET ,player1_wins);
-    printf(blue "Player 2 (O):%d wins\n" RESET,player2_wins);
-    printf(COLOR_YELLOW "Draws    :%d\n" RESET,draws);
-    printf("============================\n");
+    FILE *fr;
+    fr=fopen("tictactoe_highscore.txt","r");
+    if(fr!=NULL){
+        fscanf(fr,"%s %d",top_player_name,&top_player_wins);
+        fclose(fr);
+    }
+
+    printf("\n"CENTER_PADDING BOLD"=== CURRENT SCOREBOARD ===\n"RESET);
+    printf(CENTER_PADDING cyan "Player 1 (X):%d wins\n" RESET ,player1_name,player1_wins);
+    printf(CENTER_PADDING blue "Player 2 (O):%d wins\n" RESET,player2_name,player2_wins);
+    printf(CENTER_PADDING COLOR_YELLOW "Draws    :%d\n" RESET,draws);
+    printf(CENTER_PADDING PINK"ALL-TIME LEADER:%s(%d wins) \n" RESET,top_player_name,top_player_wins);
+    printf(CENTER_PADDING "============================\n");
+
 }
 int main()
 {
@@ -114,6 +163,21 @@ int main()
     {
         printf(COLOR_RED"Error saving scores to file!\n" RESET);
         return 1;
+    }
+     //Centered Title Screen & Unique Name Configuration Loop
+    system("cls");
+    printf("\n\n" CENTER_PADDING pink_slowblink"=== WELCOME TO TIC-TAC-TOE ===\n\n" RESET);
+    printf(CENTER_PADDING "Enter Player 1(X) Name:");
+    scanf("%s",player1_name);
+    
+    while(1){
+        printf(CENTER_PADDING "Enter Player 2(O) Name:");
+        scanf("%s",player2_name);
+        
+        if(strcmp(player1_name, player2_name)!=0) {
+            break; //Names are unique, safely proceed
+        }
+        printf("\n"CENTER_PADDING COLOR_RED "Error:Players cannot have matching names! Try again.\n" RESET);
     }
 
     char replay_choice;
@@ -133,7 +197,7 @@ do
         printf("\nPlayer %d: ",player);
         if(scanf("%d",&move)!=1)
         {
-            printf(COLOR_RED"Invalid input!Please enter a number between 1 and 9 \n"RESET);
+            printf(COLOR_RED "Invalid input ! Please enter a number between 1 and 9 \n" RESET);
             while(getchar()!='\n');
             system("pause");
             system("cls");
@@ -141,8 +205,6 @@ do
             continue;
         }
         //row and column chosen by the player
-        if(move>=1 && move<=9)
-        {
         row=(move-1)/3;
         column=(move-1)%3;
         //checking wether the move is valid
@@ -157,14 +219,11 @@ do
                 board[row][column]='O';
             }
         }
-       }
         else
         {
             printf(COLOR_RED "Invalid move! Try Again.\n" RESET);
             player--;//so that the increment doesnt change the player
             system("pause");
-            system("cls");
-            continue;
         }
         system("cls");//to refresh the board
         drawboard();
@@ -195,19 +254,20 @@ do
          }
          player++;
         } //end of inner while(1) loop
-         printf("\n Do you want to play another round?(y/n):");
-      fflush(stdin); 
-    scanf("%c",&replay_choice);
+         printf("\n Do you want to play another round? (y/n): ");
+    fflush(stdin); 
+    scanf(" %c", &replay_choice);
    }
 
- while (replay_choice=='y'|| replay_choice=='Y');
+ while (replay_choice == 'y' || replay_choice == 'Y');
   {
     fprintf(file,"=== TIC-TAC-TOE MATCH SUMMARY ===\n");
-    fprintf(file,"Player 1(X)Wins: %d\n",player1_wins);
-    fprintf(file,"Player 2(O)Wins: %d\n",player2_wins);
+    fprintf(file,"%s Player 1(X)Wins: %d\n",player1_name,player1_wins);
+    fprintf(file,"%s Player 2(O)Wins: %d\n",player2_name,player2_wins);
     fprintf(file,"Total Draws       : %d\n",draws);
+    fprintf(file,"All-Time Record Holder:%s (%d Wins)\n",top_player_name,top_player_wins);
     fclose(file);
-    printf(COLOR_GREEN"\n Scores successfully saved to'tictactoe_scores.txt'!\n"RESET);
+    printf(COLOR_GREEN"\n"CENTER_PADDING "Scores successfully saved to'tictactoe_scores.txt'!\n"RESET);
     system("pause");
   }
   return 0;
