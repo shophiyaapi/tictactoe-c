@@ -5,14 +5,14 @@
 
 #define COLOR_RED     "\x1b[31m"//replaces COLOR_RED with the escape code for red color
 #define COLOR_GREEN   "\x1b[32m"
-#define COLOR_YELLOW  "\x1b[33m"
+#define yellow        "\e[1;93m"
 #define RESET         "\x1b[0m"
 #define BOLD          "\x1b[1m"
 #define PINK          "\x1b[35m"
 #define blue          "\x1b[34m"
 #define cyan          "\x1b[36m"
 #define pink_slowblink "\x1b[5;35m"
-#define CENTER_PADDING "                                                             "
+#define CENTER_PADDING "                               "
 //Helper macro for centering (adjusting spaces to push everything to the center)
 //board
 char board[3][3]={
@@ -22,12 +22,13 @@ char board[3][3]={
 
 //drawing the board
 void drawboard(){
+    printf("\n");
     for(int i=0;i<3;i++)
     {
-        printf(BOLD" %c  |  %c  |  %c\n" ,board[i][0],board[i][1],board[i][2]);
+        printf(CENTER_PADDING BOLD blue "   %c  |  %c  |  %c \n",board[i][0],board[i][1],board[i][2]);
         if(i!=2)
         {
-            printf("---------------\n" RESET);
+            printf(CENTER_PADDING "  ---------------\n" RESET);
         }
 
     }
@@ -82,20 +83,20 @@ int checkwin()
     return 0;
 }
 //score tracking variables
-int player1_wins=0;
-int player2_wins=0;
-int draws=0;
+int player1_wins = 0;
+int player2_wins = 0;
+int draws = 0;
 //New global variables for custom names 
 char player1_name[50];
 char player2_name[50];
 // higher score tracking variables
 char top_player_name[50]="None";
 int top_player_wins=0;
-//board reset for new rounds
-void init_board()
-{
-    char start_char='1';
-    for(int i=0;i<3;i++)
+ //board reset for new rounds 
+    void init_board() 
+    {
+    char start_char = '1';
+    for (int i = 0; i < 3; i++) 
     {
         for(int j=0;j<3;j++)
         {
@@ -156,7 +157,7 @@ void display_scoreboard()
 }
 int main()
 {
-//file i/o score tracking
+//file i/o score tracking 
     FILE *file;
     file=fopen("tictactoe_scores.txt","w");
     if (file==NULL) 
@@ -195,15 +196,7 @@ do
     {
         player=(player%2)?1:2;
         printf("\nPlayer %d: ",player);
-        if(scanf("%d",&move)!=1)
-        {
-            printf(COLOR_RED "Invalid input ! Please enter a number between 1 and 9 \n" RESET);
-            while(getchar()!='\n');
-            system("pause");
-            system("cls");
-            drawboard();
-            continue;
-        }
+        scanf("%d",&move);
         //row and column chosen by the player
         row=(move-1)/3;
         column=(move-1)%3;
@@ -232,9 +225,9 @@ do
          {
             system("cls");
             drawboard();
-            printf(COLOR_GREEN "Player %d WINS!"RESET "\n",player);
-            printf(COLOR_RED "Player %d is a LOSER!"RESET "\n",3-player);
-            if (player==1) 
+            printf(COLOR_GREEN "Player %d WINS!" RESET "\n",player);
+            printf(COLOR_RED "Player %d is a LOSER!" RESET "\n",3-player);
+            if (player == 1) 
             {
                 player1_wins++;
             }
@@ -248,17 +241,16 @@ do
          {
             system("cls");
             drawboard();
-            printf(COLOR_YELLOW "It's a Draw!" RESET"\n");
+            printf(CENTER_PADDING COLOR_YELLOW "It's a Draw!" RESET "\n");
             draws++;
             break;
          }
          player++;
-        } //end of inner while(1) loop
-         printf("\n Do you want to play another round? (y/n): ");
+    } //end of inner while(1) loop
+    printf("\n Do you want to play another round? (y/n): ");
     fflush(stdin); 
     scanf(" %c", &replay_choice);
-   }
-
+}
  while (replay_choice == 'y' || replay_choice == 'Y');
   {
     fprintf(file,"=== TIC-TAC-TOE MATCH SUMMARY ===\n");
