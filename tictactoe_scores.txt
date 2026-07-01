@@ -1,4 +1,12 @@
-=== TIC-TAC-TOE MATCH SUMMARY ===
-Player 1 (X) Wins: 1
-Player 2 (O) Wins: 0
-Total Draws       : 0
+shophie wins: 2
+kiki wins: 0
+ty wins: 1
+ui wins: 0
+ss wins: 1
+dd wins: 0
+re wins: 1
+rr wins: 0
+we wins: 1
+rr wins: 0
+sristy wins: 1
+shophiya wins: 0
