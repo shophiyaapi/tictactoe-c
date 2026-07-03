@@ -1,6 +1,8 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 #include<windows.h>//to refresh display and clear screen
+#include<graphics.h>
 
 #define COLOR_RED     "\x1b[31m"//replaces COLOR_RED with the escape code for red color
 #define COLOR_GREEN   "\x1b[32m"
@@ -9,11 +11,17 @@
 #define BOLD          "\x1b[1m"
 #define boldblue      "\x1b[1;34m"
 #define cyan          "\e[1;96m"
+#define blink         "\x1b[5m"
+#define pink          "\e[1;95m"
 #define pink_slowblink "\x1b[5;95m"
 #define white         "\e[1;97m"
+#define brightblue     "\e[1;94m"
 #define bluebackground    "\x1b[44m"
+#define pinkbackground    "\x1b[45m"
+#define magenta       "\e[1;35m"
 #define magentaslowblink "\x1b[5;35m"
 #define padding "                                                            "
+#define namewidth 25 //to set the width of the names so the spacing is even
 
 
 //score tracking variables
@@ -22,14 +30,16 @@ int p2win=0;
 int draw=0;
 int gamerun=0;
 //player name variables
-char player1[25];
-char player2[25];
+char player1[20];
+char player2[20];
 
 struct PlayerScores
 {
-    char name[25];
+    char name[20];
     int wins;
 }user[100];
+struct PlayerScores temp;
+
 //count variable to keep track of the number of players in the leaderboard
 int count=0;
 
@@ -57,44 +67,34 @@ void drawboard(){
 // leaderboard 
 void leaderboard()
 {
-    FILE *file;
-    file=fopen("tictactoe_scores.txt","r");
-    if (file==NULL) 
+ // Sort the scores in descending order
+    for (int i=0; i<count-1; i++)
     {
-        printf(padding COLOR_RED "Error opening scores file!\n" RESET);
-        return;
-    }
-    else
-    {
-        struct PlayerScores temp;
-        //reading the scores from the file
-        while (fscanf(file, "%s wins: %d", user[count].name, &user[count].wins) == 2)
+        for (int j=0; j<count-i-1; j++)
         {
-            count++;
-        }
-        fclose(file);
-
-     // Sort the scores in descending order
-        for (int i=0; i<count-1; i++)
-        {
-            for (int j=0; j<count-i-1; j++)
+            if (user[j].wins<user[j+1].wins)
             {
-                if (user[j].wins<user[j+1].wins)
-                {
-                    temp=user[j];//temp structure
-                    user[j]=user[j+1];
-                    user[j+1]=temp;
-                }
+                temp=user[j];//temp structure
+                user[j]=user[j+1];
+                user[j+1]=temp;
             }
         }
-     //leaderboard display
-        printf("\n" padding  boldblue "=== LEADERBOARD ===\n" RESET);
-        for (int i=0; i<count; i++)
+    }
+    //leaderboard display
+    printf("\n" padding  boldblue "=========== LEADERBOARD ===========\n" RESET);
+    for (int i=0; i<count; i++)
+    {
+        if(i==0)
         {
-            printf(padding "%d. %s: %d wins\n",i + 1,user[i].name,user[i].wins);
+            printf(padding BOLD yellow blink "%d. %-*s %d wins\n" RESET ,i + 1, namewidth, user[i].name, user[i].wins);
+        }
+        else
+        {
+            printf(padding "%d. %-*s %d wins\n",i + 1, namewidth, user[i].name, user[i].wins);
         }
     }
 }
+
 
 
 //for checking the current status of the game
@@ -163,15 +163,34 @@ void init_board()
 //live console scoreboard
 void display_scoreboard()
 {
-    printf("\n" padding bluebackground   pink_slowblink "=== CURRENT SCOREBOARD ===\n" RESET);
-    printf(padding bluebackground   cyan   "|  %s (X): %d wins          |\n" RESET, player1, p1win);
-    printf(padding bluebackground  yellow  "|  %s (O): %d wins          |\n" RESET, player2, p2win);
-    printf(padding bluebackground  white  "|  Draws       : %d       |\n" RESET, draw);
-    printf(padding bluebackground  pink_slowblink  "==========================\n" RESET);
+    printf("\n" padding bluebackground   pink_slowblink "====== CURRENT SCOREBOARD =======\n" RESET);
+    printf(padding bluebackground   cyan   "|  %-*s (X): %d wins  |\n" RESET, namewidth, player1, p1win);
+    printf(padding bluebackground  yellow  "|  %-*s (O): %d wins  |\n" RESET, namewidth, player2, p2win);
+    printf(padding bluebackground  white  "|  %-*s (=): %d draws |\n" RESET, namewidth, "Draws", draw);
+    printf(padding bluebackground  pink_slowblink  "=================================\n" RESET);
 }
+
 
 int main()
 {
+    //file for reading names and scores
+    FILE *readfile;
+    readfile=fopen("tictactoe_scores.txt","r");
+    if (readfile==NULL) 
+    {
+        printf( padding COLOR_RED "Error opening scores file!\n" RESET);
+        return 1;
+    }
+    else
+    {
+        //reading the scores from the file
+        while (fscanf(readfile, "%s wins: %d", user[count].name, &user[count].wins) == 2)
+        {
+            count++;
+        }
+    }
+    fclose(readfile);
+
     //file i/o score tracking 
     FILE *file;
     file=fopen("tictactoe_scores.txt","a");
@@ -184,12 +203,13 @@ int main()
     char replaychoice;
 
     //game menu
-    printf(padding magentaslowblink "=== Welcome to TicTacToe! ===\n" RESET);
-    printf(padding "1. Start Game\n");
-    printf(padding "2. Check Leaderboard\n");
-    printf(padding "3. Exit\n");
+    printf(padding  magenta "===" blink " Welcome to TicTacToe! " RESET magenta "===\n" RESET);
+    printf(padding BOLD pinkbackground "1. Start Game                " RESET "\n");
+    printf(padding BOLD pinkbackground "2. Check Leaderboard         " RESET "\n");
+    printf(padding BOLD pinkbackground "3. Exit                      " RESET "\n");
+    printf(padding  magenta "=============================\n" RESET);
     int choice;
-    printf(padding "Enter your choice: ");
+    printf("\n" padding yellow "Enter your choice: " RESET);
     scanf("%d", &choice);
 
     //switch case for menu options  
@@ -204,34 +224,37 @@ int main()
                     p1win = 0;
                     p2win = 0;
                     draw = 0;
-                    printf(padding "\n Player 1 (x) Enter Your Name: ");
+                    printf("\n" padding cyan "Player 1 (x) Enter Your Name: ");
                     scanf("%s", player1);
                     for(int i=0;i<count;i++)
                     {
-                        if(strcmp(player1,user[i].name)==0)
+                        int cmp=strcmp(player1,user[i].name);
+                        if(cmp==0)
                         {
-                            printf(padding "Name not available, please choose a different name.\n");
-                            printf(padding "\n Player 1 (x) Enter Your Name: ");
+                            printf(padding cyan "Name not available, please choose a different name.\n");
+                            printf("\n" padding cyan "Player 1 (x) Enter Your Name: ");
                             scanf("%s", player1);
-                            i=-1;//reset the loop so the next iteration starts from i=0 after increment
+                            i=-1;
                         }
                     }
-                    printf(padding "\n Player 2 (o) Enter Your Name: ");
+                    printf("\n" padding yellow "Player 2 (o) Enter Your Name: ");
                     scanf("%s", player2);
                     for(int i=0;i<count;i++)
                     {
-                        if(strcmp(player2,user[i].name)==0||player2==player1)
+                        int cmp=strcmp(player2,user[i].name);
+                        int cmp1=strcmp(player1,player2);
+                        if((cmp==0)||(cmp1==0))
                         {
-                            printf(padding "Name not available, please choose a different name.\n");
-                            printf(padding "\n Player 2 (o) Enter Your Name: ");
+                            printf(padding yellow "Name not available, please choose a different name.\n");
+                            printf("\n" padding yellow "Player 2 (o) Enter Your Name: ");
                             scanf("%s", player2);
-                            i=-1;//reset the loop so the next iteration starts from i=0 after increment
+                            i=-1;
                         }
                     }
                 }
                 else
                 {
-                    printf(padding "\n Do you want to use the same names(Y/N)?: ");
+                    printf("\n" padding brightblue "Do you want to use the same names(Y/N)?: ");
                     fflush(stdin);
                     scanf("%c", &replaychoice);
                     if (replaychoice=='n'|| replaychoice=='N') 
@@ -239,21 +262,44 @@ int main()
                         p1win = 0;
                         p2win = 0;
                         draw = 0;
-                        printf(padding "\n Player 1 (x) Enter Your Name: ");
+                        printf("\n" padding cyan "Player 1 (x) Enter Your Name: ");
                         scanf("%s", player1);
-                        printf(padding "\n Player 2 (o) Enter Your Name: ");
+                        for(int i=0;i<count;i++)
+                        {
+                           int cmp=strcmp(player1,user[i].name);
+                           if(cmp==0)
+                            {
+                                printf(padding "Name not available, please choose a different name.\n");
+                                printf("\n" padding cyan "Player 1 (x) Enter Your Name: ");
+                                scanf("%s", player1);
+                                i=-1;
+                            }
+                        }
+                        printf("\n" padding yellow "Player 2 (o) Enter Your Name: ");
                         scanf("%s", player2);
+                        for(int i=0;i<count;i++)
+                        {
+                            int cmp=strcmp(player2,user[i].name);
+                            int cmp1=strcmp(player1,player2);
+                            if((cmp==0)||(cmp1==0))
+                            {
+                            printf(padding "Name not available, please choose a different name.\n");
+                            printf("\n" padding yellow "Player 2 (o) Enter Your Name: ");
+                            scanf("%s", player2);
+                            i=-1;
+                            }
+                        }
                     }
                     else
                     {
-                        printf(padding "\n Continuing with the same names: %s and %s\n", player1, player2);
+                        printf("\n" padding "Continuing with the same names: %s and %s\n", player1, player2);
                     }
                 }
 
                 init_board(); // Clears board array for a new match
                 system("cls");
                 display_scoreboard(); // Shows the live scores
-                printf(padding magentaslowblink " Let's Play TicTacToe!\n" RESET);
+                printf("\n" padding BOLD magentaslowblink " Let's Play TicTacToe!\n" RESET);
                 drawboard();
                 int row,column,status;
                 int move =0; 
@@ -325,12 +371,12 @@ int main()
 
                 gamerun++;
                 display_scoreboard();
-                printf("\n" padding "Do you want to play another round? (y/n): ");
+                printf("\n" padding brightblue "Do you want to play another round? (y/n): ");
                 fflush(stdin); 
                 scanf(" %c", &replaychoice);
                 if(replaychoice!='y' && replaychoice!='Y')
                 {
-                    printf("\n" padding "Thank you for playing TicTacToe!\n");
+                    printf("\n" padding pink"Thank you for playing TicTacToe!\n");
                 }
             }
             while (replaychoice == 'y' || replaychoice == 'Y');//if the condition is true it starts from the start of the do loop if false it exits
@@ -338,7 +384,7 @@ int main()
             fprintf(file, "%s wins: %d\n", player1, p1win);
             fprintf(file, "%s wins: %d\n", player2, p2win);
             fclose(file);
-            printf(COLOR_GREEN "\n Scores saved to successfully!" RESET);
+            printf("\n" padding COLOR_GREEN "Scores saved to successfully!" RESET);
             system("pause");
             return 0;
             break;
@@ -347,17 +393,18 @@ int main()
             leaderboard();
             printf("\n" padding "Press any key to return to the main menu...");
             getchar(); //Wait for user input
-            getchar(); //Consume the newline character
+            getchar(); //Consume the newline character left after last key stroke
             system("cls");
             main(); //Restart the main function to show the menu again
             return 0; //Exit the current instance of main after returning to the menu
+
         case 3:
-            printf(padding "Thank you for playing TicTacToe!\n");
+            printf("\n" padding pink "Thank you for playing TicTacToe!\n");
             exit(0);
+
         default:
             printf(padding COLOR_RED "Invalid choice!\n" RESET);
             getchar();
-            getchar(); //Consume the newline character
             system("cls");
             main();
     }
