@@ -6,3 +6,9 @@ ss wins: 1
 dd wins: 0
 sristy wins: 1
 
+r wins: 1
+3 wins: 0
+rooose wins: 0
+rosw wins: 1
+rose wins: 1
+pipo wins: 0
