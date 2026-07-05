@@ -2,7 +2,6 @@
 #include<stdlib.h>
 #include<string.h>
 #include<windows.h>//to refresh display and clear screen
-#include<graphics.h>
 
 #define COLOR_RED     "\x1b[31m"//replaces COLOR_RED with the escape code for red color
 #define COLOR_GREEN   "\x1b[32m"
@@ -22,8 +21,6 @@
 #define magentaslowblink "\x1b[5;35m"
 #define padding "                                                            "
 #define namewidth 25 //to set the width of the names so the spacing is even
-
-
 //score tracking variables
 int p1win=0;
 int p2win=0;
@@ -49,21 +46,41 @@ char board[3][3]={
     {'4','5','6'},
     {'7','8','9'}
 };
-
+//color coding for pieces
+void print_piece(char piece)
+{
+   if (piece =='X')
+   {
+      printf(COLOR_RED BOLD "%c" RESET, piece);
+   }
+   else if (piece=='O')
+   {
+     printf(COLOR_GREEN BOLD "%c" RESET,piece);
+   }
+   else
+   {
+    printf(brightblue "%c" RESET,piece);
+   }
+}
 //drawing the board
 void drawboard(){
     printf("\n");
     for(int i=0;i<3;i++)
     {
-        printf(padding boldblue "   %c  |  %c  |  %c \n",board[i][0],board[i][1],board[i][2]);
+    	printf("%s ",padding);
+        print_piece(board[i][0]); 
+		printf(boldblue " | " RESET);
+        print_piece(board[i][1]); 
+		printf(boldblue " | " RESET);
+        print_piece(board[i][2]);
+        printf("\n");
         if(i!=2)
         {
-            printf(padding "  ---------------\n" RESET);
+            printf("%s" boldblue "---------------\n" RESET,padding);
         }
-
+        printf("\n");
     }
 } 
-
 // leaderboard 
 void leaderboard()
 {
@@ -94,8 +111,6 @@ void leaderboard()
         }
     }
 }
-
-
 
 //for checking the current status of the game
 //return 1 for win and return 2 for draw  and return 0 for ongoing game 
@@ -175,7 +190,7 @@ int main()
 {
     //file for reading names and scores
     FILE *readfile;
-    readfile=fopen("tictactoe_scores.txt","r");
+    readfile=fopen("tictactoe_scores.txt","a+");
     if (readfile==NULL) 
     {
         printf( padding COLOR_RED "Error opening scores file!\n" RESET);
@@ -398,8 +413,8 @@ int main()
             getchar(); //Wait for user input
             getchar(); //Consume the newline character left after last key stroke
             system("cls");
-            main(); //Restart the main function to show the menu again
-            return 0; //Exit the current instance of main after returning to the menu
+            break;//Restart the main function to show the menu again
+        
 
         case 3:
             printf("\n" padding pink "Thank you for playing TicTacToe!\n");
@@ -409,6 +424,7 @@ int main()
             printf(padding COLOR_RED "Invalid choice!\n" RESET);
             getchar();
             system("cls");
-            main();
+            break;
     }
+    return 0;
 }
