@@ -20,7 +20,7 @@
 #define magenta       "\e[1;35m"
 #define magentaslowblink "\x1b[5;35m"
 #define padding "                                                            "
-#define namewidth 25 //to set the width of the names so the spacing is even
+#define namewidth 15 //to set the width of the names so the spacing is even
 //score tracking variables
 int p1win=0;
 int p2win=0;
@@ -190,7 +190,7 @@ int main()
 {
     //file for reading names and scores
     FILE *readfile;
-    readfile=fopen("tictactoe_scores.txt","a+");
+    readfile=fopen("tictactoe_scores.txt","r");
     if (readfile==NULL) 
     {
         printf( padding COLOR_RED "Error opening scores file!\n" RESET);
@@ -305,9 +305,14 @@ int main()
                             }
                         }
                     }
-                    else
+                    else if(replaychoice=='y'|| replaychoice=='Y')
                     {
                         printf("\n" padding "Continuing with the same names: %s and %s\n", player1, player2);
+                    }
+                    else
+                    {
+                        printf("\n" padding COLOR_RED "Invalid choice! Continuing with the same name" RESET);
+                        system("pause");
                     }
                 }
 
@@ -362,7 +367,7 @@ int main()
                        system("cls");
                        drawboard();
                        printf("\n" padding cyan "Player %s" RESET COLOR_GREEN  " WINS!" RESET, (player==1)?player1:player2);
-                       printf("\n" padding yellow "Player %s" RESET " is a " RESET COLOR_RED   "LOSER!" RESET, (player==2)?player1:player2);
+                       printf("\n" padding yellow "Player %s" RESET " is a " RESET COLOR_RED   "LOSER!\n" RESET, (player==2)?player1:player2);
                        if (player == 1) 
                        {
                            p1win++;
@@ -388,10 +393,10 @@ int main()
                 display_scoreboard();
                 printf("\n" padding brightblue "Do you want to play another round? (y/n): ");
                 fflush(stdin); 
-                scanf(" %c", &replaychoice);
-                if(replaychoice!='n' && replaychoice!='N')
+                scanf("%c", &replaychoice);
+                if((replaychoice!='y' || replaychoice!='Y') && (replaychoice!='n' || replaychoice!='N'))
                 {
-                    printf("\n" padding pink"Thank you for playing TicTacToe!\n");
+                    printf("\n" padding COLOR_RED "INVALID CHOICE!\n" RESET);
                     getchar();
                     system("cls");
                     main();
@@ -402,10 +407,11 @@ int main()
             fprintf(file, "%s wins: %d\n", player1, p1win);
             fprintf(file, "%s wins: %d\n", player2, p2win);
             fclose(file);
-            printf("\n" padding COLOR_GREEN "Scores saved to successfully!" RESET);
             system("pause");
-            return 0;
-            break;
+            printf("\n" padding pink"Thank you for playing TicTacToe!\n");
+            getchar();
+            system("cls");
+            main();
 
         case 2:
             leaderboard();
@@ -413,18 +419,20 @@ int main()
             getchar(); //Wait for user input
             getchar(); //Consume the newline character left after last key stroke
             system("cls");
-            break;//Restart the main function to show the menu again
+            main ();
+            return 0;//to exit current main
         
 
         case 3:
             printf("\n" padding pink "Thank you for playing TicTacToe!\n");
+            system("pause");
             exit(0);
 
         default:
             printf(padding COLOR_RED "Invalid choice!\n" RESET);
             getchar();
+            getchar();//consume newline character
             system("cls");
-            break;
+            main();
     }
-    return 0;
 }

@@ -1,21 +1,20 @@
-shophie wins: 2
-kiki wins: 0
-ty wins: 1
-ui wins: 0
-ss wins: 1
-dd wins: 0
-sristy wins: 1
-
-<<<<<<< HEAD
-Deepak wins: 1
-Rose wins: 0
-jhjh wins: 1
-jhvhjv wins: 0
-=======
-r wins: 1
-3 wins: 0
-rooose wins: 0
-rosw wins: 1
-rose wins: 1
-pipo wins: 0
->>>>>>> 168b0f880b16c5eb4d69411f78f9aa3e593ab7e4
+1 wins: 3
+2 wins: 0
+7 wins: 1
+8 wins: 0
+popo wins: 1
+erty wins: 0
+rhrth wins: 1
+ejyt wins: 0
+rhrth wins: 1
+ejyt wins: 0
+rhrth wins: 1
+ejyt wins: 0
+bhtrth wins: 1
+hrtj wins: 0
+bhtrth wins: 1
+hrtj wins: 0
+bhtrth wins: 1
+hrtj wins: 0
+bhtrth wins: 1
+hrtj wins: 0
