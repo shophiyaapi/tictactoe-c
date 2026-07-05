@@ -6,3 +6,7 @@ ss wins: 1
 dd wins: 0
 sristy wins: 1
 
+Deepak wins: 1
+Rose wins: 0
+jhjh wins: 1
+jhvhjv wins: 0
