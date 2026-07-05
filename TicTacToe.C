@@ -374,9 +374,12 @@ int main()
                 printf("\n" padding brightblue "Do you want to play another round? (y/n): ");
                 fflush(stdin); 
                 scanf(" %c", &replaychoice);
-                if(replaychoice!='y' && replaychoice!='Y')
+                if(replaychoice!='n' && replaychoice!='N')
                 {
                     printf("\n" padding pink"Thank you for playing TicTacToe!\n");
+                    getchar();
+                    system("cls");
+                    main();
                 }
             }
             while (replaychoice == 'y' || replaychoice == 'Y');//if the condition is true it starts from the start of the do loop if false it exits
