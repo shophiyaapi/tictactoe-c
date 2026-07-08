@@ -1,7 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-#include<windows.h>//to refresh display and clear screen
 #include<stdbool.h>//for boolean values
 #include<time.h>//for random number generation
 
@@ -28,12 +27,13 @@
 
 //to store the choice of the user for the game mode
  int choice=0;
-
+ int choice2=0;
 //score tracking variables
 int p1win=0;
 int p2win=0;
 int draw=0;
-int gamerun=0;
+int gamerun1=0;
+int gamerun2=0;
 //player name variables
 char player1[20];
 char player2[20];
@@ -54,6 +54,18 @@ char board[3][3]={
     {'4','5','6'},
     {'7','8','9'}
 };
+
+
+ //randomizer for computer move
+ int randomizer()
+ {
+    int m=rand()%3;//gives either 0,1,2;
+    return m;
+ }
+
+
+
+
 //color coding for pieces
 void print_piece(char piece)
 {
@@ -70,12 +82,25 @@ void print_piece(char piece)
     printf(brightblue " %c" RESET,piece);
    }
 }
+
+//live console scoreboard
+void display_scoreboard()
+{
+    printf("\n" padding bluebackground   pink_slowblink "====== CURRENT SCOREBOARD =======\n" RESET);
+    printf(padding bluebackground   cyan   "|  %-*s (X): %d wins  |\n" RESET, namewidth, player1, p1win);
+    printf(padding bluebackground  yellow  "|  %-*s (O): %d wins  |\n" RESET, namewidth,((choice==2)?"Computer":player2), p2win);
+    printf(padding bluebackground  white  "|  %-*s (=): %d draws |\n" RESET, namewidth, "Draws", draw);
+    printf(padding bluebackground  pink_slowblink  "=================================\n" RESET);
+}
+
 //drawing the board
 void drawboard(){
-    printf("\n");
+    display_scoreboard();
+    printf("\n" padding BOLD magentaslowblink " Let's Play TicTacToe!\n" RESET);
+    printf("\n\n");
     for(int i=0;i<3;i++)
     {
-    	printf("%s", padding);
+    	printf("%s\t", padding);
         print_piece(board[i][0]); 
 		printf(boldblue " | " RESET);
         print_piece(board[i][1]); 
@@ -84,7 +109,7 @@ void drawboard(){
         printf("\n");
         if(i!=2)
         {
-            printf("%s" boldblue "-------------\n" RESET,padding);
+            printf("%s" boldblue "\t-------------\n" RESET,padding);
         }
         printf("\n");
     }
@@ -131,7 +156,7 @@ void leaderboard()
             }
         }
     }
-    //leaderboard display
+    //display leaderboard 
     printf("\n" padding  boldblue "======= LEADERBOARD =======\n" RESET);
     for (int i=0; i<count; i++)
     {
@@ -141,7 +166,7 @@ void leaderboard()
         }
         else
         {
-            printf(padding "%d. %-*s %d wins\n",i + 1, namewidth, user[i].name, user[i].wins);
+            printf(padding COLOR_GREEN "%d. %-*s %d wins\n",i + 1, namewidth, user[i].name, user[i].wins);
         }
     }
 }
@@ -157,16 +182,16 @@ int checkwin(char board[3][3])
     {
         if(board[i][0]==board[i][1]&&board[i][1]==board[i][2])
         {
-            if(choice==1)
+            if(choice==1 || (choice==2 && choice2!=3))
             {
                 return 1;
             }
-            else if(choice==2)
+            else if(choice==2 && choice2==3)
             {
                 if (board[i][0]==computer)
-                return +10;
+                    return +10;
                 else if (board[i][0]==human)
-                return -10;
+                    return -10;
             }
         }
     }
@@ -175,46 +200,46 @@ int checkwin(char board[3][3])
     {
         if(board[0][i]==board[1][i]&&board[1][i]==board[2][i])
         {
-            if(choice==1)
+            if(choice==1 || (choice==2 && choice2!=3))
             {
                 return 1;
             }
-            else if(choice==2)
+            else if(choice==2 && choice2==3)
             {
                 if (board[0][i]==computer)
-                return +10;
+                    return +10;
                 else if (board[0][i]==human)
-                return -10;
+                    return -10;
             }
         }
     }
     //for diagonals
     if(board[0][0]==board[1][1]&&board[1][1]==board[2][2])
     {
-        if(choice==1)
+        if(choice==1 || (choice==2 && choice2!=3))
         {
             return 1;
         }
-        else if(choice==2)
+        else if(choice==2 && choice2==3)
         {
             if (board[0][0]==computer)
-            return +10;
+                return +10;
             else if (board[0][0]==human)
-            return -10;
+                return -10;
         }
     }
     if(board[0][2]==board[1][1]&&board[1][1]==board[2][0])
     {
-        if(choice==1)
+        if(choice==1 || (choice==2 && choice2!=3))
         {
             return 1;
         }
-        else if(choice==2)
+        else if(choice==2 && choice2==3)
         {
             if (board[0][2]==computer)
-            return +10;
+                return +10;
             else if (board[0][2]==human)
-            return -10;
+                return -10;
         }
     }
     //for draw
@@ -340,19 +365,11 @@ void init_board()
     }
 }
 
-//live console scoreboard
-void display_scoreboard()
-{
-    printf("\n" padding bluebackground   pink_slowblink "====== CURRENT SCOREBOARD =======\n" RESET);
-    printf(padding bluebackground   cyan   "|  %-*s (X): %d wins  |\n" RESET, namewidth, player1, p1win);
-    printf(padding bluebackground  yellow  "|  %-*s (O): %d wins  |\n" RESET, namewidth,((choice==2)?"Computer":player2), p2win);
-    printf(padding bluebackground  white  "|  %-*s (=): %d draws |\n" RESET, namewidth, "Draws", draw);
-    printf(padding bluebackground  pink_slowblink  "=================================\n" RESET);
-}
-
 
 int main()
 {
+    srand((unsigned)time(NULL));
+
     //file for reading names and scores
     FILE *readfile;
     readfile=fopen("tictactoe_scores.txt","r");
@@ -383,6 +400,7 @@ int main()
     char replaychoice = '\0';
 
     //game menu
+    printf("\n\n\n");
     printf(padding  magenta "===" blink " Welcome to TicTacToe! " RESET magenta "===\n" RESET);
     printf(padding BOLD pinkbackground "1. PLAYER VS PLAYER          " RESET "\n");
     printf(padding BOLD pinkbackground "2. PLAYER VS COMPUTER        " RESET "\n");
@@ -395,11 +413,13 @@ int main()
     //switch case for menu options  
     switch (choice) 
     {
-        case 1:
+        case 1: 
+        {
+
             do //replay menu do while use garera 
             {
             //player name input
-                if(gamerun==0)
+                if(gamerun1==0)
                 {
                     p1win = 0;
                     p2win = 0;
@@ -483,8 +503,6 @@ int main()
 
                 init_board(); // Clears board array for a new match
                 system("cls");
-                display_scoreboard(); // Shows the live scores
-                printf("\n" padding BOLD magentaslowblink " Let's Play TicTacToe!\n" RESET);
                 drawboard();
                 int row,column,status;
                 int move =0; 
@@ -529,10 +547,6 @@ int main()
                     status=checkwin(board);
                     if(status==1)
                     {
-                       system("cls");
-                       drawboard();
-                       printf("\n" padding cyan "Player %s" RESET COLOR_GREEN  " WINS!" RESET, (player==1)?player1:player2);
-                       printf("\n" padding yellow "Player %s" RESET " is a " RESET COLOR_RED   "LOSER!\n" RESET, (player==2)?player1:player2);
                        if (player == 1) 
                        {
                            p1win++;
@@ -540,22 +554,25 @@ int main()
                         else
                         {
                             p2win++;
-                        }              
+                        }
+                        system("cls");
+                        drawboard();
+                        printf("\n" padding cyan "Player %s" RESET COLOR_GREEN  " WINS!" RESET, (player==1)?player1:player2);
+                        printf("\n" padding yellow "Player %s" RESET " is a " RESET COLOR_RED   "LOSER!\n" RESET, (player==2)?player1:player2);             
                         break;
                     }         
                     if(status==2)
                     {
+                        draw++;
                         system("cls");
                         drawboard();
-                        printf("\n" padding white "It's a Draw!" RESET );
-                        draw++;
+                        printf("\n" padding yellow "It's a Draw!" RESET );
                         break;         
                     }
                     player++;
                 } //end of inner while(1) loop
 
-                gamerun++;
-                display_scoreboard();
+                gamerun1++;
                 printf("\n" padding brightblue "Do you want to play another round? (y/n): ");
                 fflush(stdin); 
                 scanf(" %c", &replaychoice);
@@ -578,159 +595,395 @@ int main()
             getchar();
             system("cls");
             main();
+        }
 
+        case 2: 
+        {
+            //choice for vs computer
+            system("cls");
+            printf("\n\n\n");
+            printf(padding  magenta "===" blink " WELCOME TO TICTACTOE " RESET magenta "===\n" RESET);
+            printf(padding BOLD pinkbackground "1. EASY MODE                 " RESET "\n");
+            printf(padding BOLD pinkbackground "2. NORMAL MODE               " RESET "\n");
+            printf(padding BOLD pinkbackground "3. HARD MODE                 " RESET "\n");
+            printf(padding BOLD pinkbackground "4. MAIN MENU                 " RESET "\n");
+            printf(padding  magenta "=============================\n" RESET);
+            printf("\n" padding yellow "Enter your choice: " RESET);
+            scanf("%d", &choice2);
 
-        case 2:
-            do //replay menu do while use garera 
+            switch (choice2)
             {
-                if(gamerun==0)
-                {
-                    int computerwin=0;
-                    int humanwin=0;
-                    printf("\n" padding cyan "Player (x) Enter Your Name: ");
-                    scanf("%s", player1);
-                    for(int i=0;i<count;i++)
+                case 1: 
+                {     
+                    //main game loop
+                    do
                     {
-                        int cmp=strcmp(player1,user[i].name);
-                        if(cmp==0 && strcmp(player1,"Computer")!=0 && strcmp(player1,"COMPUTER")!=0)
-                        {
-                            printf(padding cyan "Name not available, please choose a different name.\n");
-                            printf("\n" padding cyan "Player (x) Enter Your Name: ");
-                            scanf("%s", player1);
-                            i=-1;
-                        }
-
-                    }
-                    
-                }
-                else
-                {
-                    printf("\n" padding brightblue "Do you want to use the same name(Y/N)?: ");
-                    fflush(stdin);
-                    scanf(" %c", &replaychoice);
-                    if (replaychoice=='n'|| replaychoice=='N') 
-                    {
-                        p1win=0;
-                        p2win=0;
-                        draw=0;
-                        printf("\n" padding cyan "Player (x) Enter Your Name: ");
-                        scanf("%s", player1);
-                        for(int i=0;i<count;i++)
-                        {
-                           int cmp=strcmp(player1,user[i].name);
-                           if(cmp==0 && strcmp(player1,"Computer")!=0 && strcmp(player1,"COMPUTER")!=0)
-                            {
-                                printf(padding "Name not available, please choose a different name.\n");
-                                printf("\n" padding cyan "Player (x) Enter Your Name: ");
-                                scanf("%s", player1);
-                                i=-1;
-                            }
-                        }
-                    }
-                    else if(replaychoice=='y'|| replaychoice=='Y')
-                    {
-                        printf("\n" padding "Continuing with the same name: %s\n", player1);
-                    }
-                    else
-                    {
-                        printf("\n" padding COLOR_RED "Invalid choice! Continuing with the same name" RESET);
-                        system("pause");
-                    }
-                }
-
-                init_board(); // Clears board array for a new match
-                system("cls");
-                display_scoreboard(); // Shows the live scores
-                printf("\n" padding BOLD magentaslowblink " Let's Play TicTacToe!\n" RESET);
-                drawboard();
-                int row,column,status;
-                int move =0; 
-                int player=1;//player 1 is human and player 2 is computer
-                while(1)
-                {
-                    player=(player%2)?1:2;
-                    if (player==1)
-                    {
-                        printf("\n" padding RESET cyan "  %s(X): " RESET , player1);
-                        scanf("%d",&move);
-                        row=(move-1)/3;
-                        column=(move-1)%3;
-                        if((board[row][column]!='X'&&board[row][column]!='O')&&(move>=1&&move<=9))
-                        {
-                            board[row][column]=human;
-                        }
-                        else
-                        {
-                            printf("\n" padding COLOR_RED "Invalid move! Try Again.\n" RESET);
-                            fflush(stdin);
-                            player--;
-                        }
-                    }
-                    else
-                    {
-                        struct storeMove bestMove=findBestMove(board);
-                        row=bestMove.row;
-                        column=bestMove.column;
-                        board[row][column]=computer;
-                    }
-                    system("cls");//to refresh the board
-                    drawboard();
-                    status=checkwin(board);
-                    if(status==10)
-                    {
-                       system("cls");
-                       drawboard();
-                       printf("\n" padding yellow "Computer" RESET COLOR_GREEN  " WINS!" RESET);
-                       printf("\n" padding cyan "%s" RESET " is a " RESET COLOR_RED   "LOSER!\n" RESET, player1);
-                       p2win++;
-                       break;
-                    }         
-                    if(status==-10)
-                    {
-                       system("cls");
-                       drawboard();
-                       printf("\n" padding cyan "%s" RESET COLOR_GREEN  " WINS!" RESET, player1);
-                       printf("\n" padding yellow "Computer" RESET " is a " RESET COLOR_RED   "LOSER!\n" RESET);
-                       p1win++;
-                       break;
-                    }         
-                    if(status==0 && isMovesLeft(board)==false)
-                    {
+                        init_board(); // Clears board array for a new match
                         system("cls");
                         drawboard();
-                        printf("\n" padding white "It's a Draw!" RESET );
-                        draw++;
-                        break;         
+                        int row,column,status;
+                        int move =0; 
+                        int player=1;
+                        while(1)
+                        {
+                            player=(player%2)?1:2;//if remainder is 1(i.e. true) then player 1's turn else player 2's turn
+                            if (player==1)
+                            {
+                                printf("\n" padding RESET cyan "  %s(X): " RESET , player1);
+                                scanf("%d",&move);
+                                row=(move-1)/3;
+                                column=(move-1)%3;
+                                if((board[row][column]!='X'&&board[row][column]!='O')&&(move>=1&&move<=9))
+                                {
+                                    board[row][column]='X';
+                                }
+                                printf("\n" padding COLOR_RED "Invalid move! Try Again.\n" RESET);
+                                fflush(stdin);
+                            }
+                            else
+                            {
+                                int r,c;
+                                do
+                                {
+                                    r=randomizer();
+                                    c=randomizer();
+                                }
+                                while(board[r][c]=='X' || board[r][c]=='O');//loops until it finds a move that isn't invalid
+                                board[r][c]='O';
+                            }
+                            system("cls");//to refresh the board
+                            drawboard();
+                            status=checkwin(board);
+                            if(status==1)
+                            {
+                                if (player == 1) 
+                                {
+                                    p1win++;
+                                }
+                                else
+                                {
+                                    p2win++;
+                                }
+                                system("cls");
+                                drawboard();
+                                printf("\n" padding cyan "Player %s" RESET COLOR_GREEN  " WINS!" RESET, (player==1)?player1:"Computer");
+                                printf("\n" padding yellow "Player %s" RESET " is a " RESET COLOR_RED   "LOSER!\n" RESET, (player==2)?player1:"Computer");             
+                                break;
+                            }         
+                            if(status==0 && isMovesLeft(board)==false)
+                            {
+                                draw++;
+                                system("cls");
+                                drawboard();
+                                printf("\n" padding yellow "It's a Draw!" RESET );
+                                break;         
+                            }
+                            player++;
+                        }//end of inner while
+                        printf("\n" padding brightblue "Do you want to play another round? (y/n): ");
+                        fflush(stdin); 
+                        scanf(" %c", &replaychoice);
+                        if(replaychoice!='y' && replaychoice!='Y' && replaychoice!='n' && replaychoice!='N')
+                        {
+                            printf("\n" padding COLOR_RED "INVALID CHOICE!\n" RESET);
+                            getchar();
+                            getchar();
+                            system("cls");
+                            main();
+                        }
                     }
-                    player++;
-                } //end of inner while(1) loop
-                gamerun++;
-
-                display_scoreboard();
-                printf("\n" padding brightblue "Do you want to play another round? (y/n): ");
-                fflush(stdin); 
-                scanf(" %c", &replaychoice);
-                if(replaychoice!='y' && replaychoice!='Y' && replaychoice!='n' && replaychoice!='N')
-                { 
-                    printf("\n" padding COLOR_RED "INVALID CHOICE! GOING TO MAIN MENU\n" RESET);
+                    while (replaychoice == 'y' || replaychoice == 'Y');//if the condition is true it starts from the start of the do loop if false it exits
+                    //do while loop false vayera  exit vayepaxi chai yo code vetera run hunxa
+                    fprintf(file, "%s wins: %d\n", player1, p1win);
+                    fprintf(file, "%s wins: %d\n", player2, p2win);
+                    fclose(file);
                     system("pause");
+                    printf("\n" padding pink"Thank you for playing TicTacToe!\n");
                     getchar();
                     system("cls");
                     main();
+                    break;
+                }
+                
+                case 2: //NORMAL mode
+                {
+                    //main game loop
+                    do
+                    {
+                        init_board(); // Clears board array for a new match
+                        system("cls");
+                        drawboard();
+                        int row,column,status;
+                        int move =0; 
+                        int player=1;
+                        while(1)
+                        {
+                            player=(player%2)?1:2;//if remainder is 1(i.e. true) then player 1's turn else player 2's turn
+                            if (player==1)
+                            {
+                                printf("\n" padding RESET cyan "  %s(X): " RESET , player1);
+                                scanf("%d",&move);
+                                row=(move-1)/3;
+                                column=(move-1)%3;
+                                if((board[row][column]!='X'&&board[row][column]!='O')&&(move>=1&&move<=9))
+                                {
+                                    board[row][column]='X';
+                                }
+                                else
+                                {
+                                    printf("\n" padding COLOR_RED "Invalid move! Try Again.\n" RESET);
+                                    fflush(stdin);
+                                    continue;
+                                }
+                            }
+                            else
+                            {
+                                int r,c;
+                                int check=0;
+                                if(((board[0][0]==board[1][1])||(board[0][2]==board[1][2])||(board[2][0]==board[2][1]))&&((board[2][2]!='X')&&(board[2][2]!='O')))
+                                {
+                                    board[2][2]=computer;
+                                    check=1;
+                                }
+                                else if(((board[0][0]==board[1][0])||(board[1][1]==board[0][1])||(board[2][1]==board[2][2]))&&((board[2][0]!='X')&&(board[2][0]!='O')))
+                                {
+                                    board[2][0]=computer;
+                                    check=1;
+                                }
+                                else if(((board[0][1]==board[0][2])||(board[1][0]==board[2][0])||(board[1][1]==board[2][2]))&&((board[0][0]!='X')&&(board[0][0]!='O')))
+                                {
+                                    board[0][0]=computer;
+                                    check=1;
+                                }
+                                else if(((board[0][0]==board[0][1])||(board[1][1]==board[2][0])||(board[1][2]==board[2][2]))&&((board[0][2]!='X')&&(board[0][2]!='O')))
+                                {
+                                    board[0][2]=computer;
+                                    check=1;
+                                }
+                                else if((board[1][1]!='O')&&(board[1][1]!='X'))
+                                {
+                                    board[1][1]=computer;
+                                    check=1;
+                                }
+                                if(!check)
+                                {
+                                    do
+                                    {
+                                        r=randomizer();
+                                        c=randomizer();
+                                    }
+                                    while(board[r][c]=='X' || board[r][c]=='O');//loops until it finds a move that isn't invalid
+                                    board[r][c]='O';
+                                }
+                            }
+                            system("cls");//to refresh the board
+                            drawboard();
+                            status=checkwin(board);
+                            if(status==1)
+                            {
+                                if (player == 1) 
+                                {
+                                    p1win++;
+                                }
+                                else
+                                {
+                                    p2win++;
+                                }
+                                system("cls");
+                                drawboard();
+                                printf("\n" padding cyan "Player %s" RESET COLOR_GREEN  " WINS!" RESET, (player==1)?player1:"Computer");
+                                printf("\n" padding yellow "Player %s" RESET " is a " RESET COLOR_RED   "LOSER!\n" RESET, (player==2)?player1:"Computer");             
+                                break;
+                            }         
+                            if(status==0 && isMovesLeft(board)==false)
+                            {
+                                draw++;
+                                system("cls");
+                                drawboard();
+                                printf("\n" padding yellow "It's a Draw!" RESET );
+                                break;         
+                            }
+                            player++;
+                        }//end of inner while
+                        printf("\n" padding brightblue "Do you want to play another round? (y/n): ");
+                        fflush(stdin); 
+                        scanf(" %c", &replaychoice);
+                        if(replaychoice!='y' && replaychoice!='Y' && replaychoice!='n' && replaychoice!='N')
+                        {
+                            printf("\n" padding COLOR_RED "INVALID CHOICE!\n" RESET);
+                            getchar();
+                            getchar();
+                            system("cls");
+                            main();
+                        }
+                    }
+                    while (replaychoice == 'y' || replaychoice == 'Y');//if the condition is true it starts from the start of the do loop if false it exits
+                    //do while loop false vayera  exit vayepaxi chai yo code vetera run hunxa
+                    fprintf(file, "%s wins: %d\n", player1, p1win);
+                    fprintf(file, "%s wins: %d\n", player2, p2win);
+                    fclose(file);
+                    system("pause");
+                    printf("\n" padding pink"Thank you for playing TicTacToe!\n");
+                    getchar();
+                    system("cls");
+                    main();
+                    break;
+                }
+                 //HARD mode
+                case 3 : 
+                {
+
+                    do //replay menu do while use garera 
+                    {
+                        if(gamerun2==0)
+                        {
+                            int computerwin=0;
+                            int humanwin=0;
+                            printf("\n" padding cyan "Player (x) Enter Your Name: ");
+                            scanf("%s", player1);
+                            for(int i=0;i<count;i++)
+                            {
+                                int cmp=strcmp(player1,user[i].name);
+                                if(cmp==0 && strcmp(player1,"Computer")!=0 && strcmp(player1,"COMPUTER")!=0)
+                                {
+                                    printf(padding cyan "Name not available, please choose a different name.\n");
+                                    printf("\n" padding cyan "Player (x) Enter Your Name: ");
+                                    scanf("%s", player1);
+                                    i=-1;
+                                }
+
+                            }
+                        
+                        }
+                        else
+                        {
+                            printf("\n" padding brightblue "Do you want to use the same name(Y/N)?: ");
+                            fflush(stdin);
+                            scanf(" %c", &replaychoice);
+                            if (replaychoice=='n'|| replaychoice=='N') 
+                            {
+                                p1win=0;
+                                p2win=0;
+                                draw=0;
+                                printf("\n" padding cyan "Player (x) Enter Your Name: ");
+                                scanf("%s", player1);
+                                for(int i=0;i<count;i++)
+                                {
+                                    int cmp=strcmp(player1,user[i].name);
+                                    if(cmp==0 && strcmp(player1,"Computer")!=0 && strcmp(player1,"COMPUTER")!=0)
+                                    {
+                                        printf(padding "Name not available, please choose a different name.\n");
+                                        printf("\n" padding cyan "Player (x) Enter Your Name: ");
+                                        scanf("%s", player1);
+                                        i=-1;
+                                    }
+                                }
+                            }
+                            else if(replaychoice=='y'|| replaychoice=='Y')
+                            {
+                                printf("\n" padding "Continuing with the same name: %s\n", player1);
+                            }
+                            else
+                            {
+                                printf("\n" padding COLOR_RED "Invalid choice! Continuing with the same name" RESET);
+                                system("pause");
+                            }
+                        }
+
+                        init_board(); // Clears board array for a new match
+                        system("cls");
+                        drawboard();
+                        int row,column,status;
+                        int move =0; 
+                        int player=1;//player 1 is human and player 2 is computer
+                        while(1)
+                        {
+                            player=(player%2)?1:2;
+                            if (player==1)
+                            {
+                                printf("\n" padding RESET cyan "  %s(X): " RESET , player1);
+                                scanf("%d",&move);
+                                row=(move-1)/3;
+                                column=(move-1)%3;
+                                if((board[row][column]!='X'&&board[row][column]!='O')&&(move>=1&&move<=9))
+                                {
+                                    board[row][column]=human;
+                                }
+                                else
+                                {
+                                    printf("\n" padding COLOR_RED "Invalid move! Try Again.\n" RESET);
+                                    fflush(stdin);
+                                    player--;
+                                }
+                            }
+                            else
+                            {
+                                struct storeMove bestMove=findBestMove(board);
+                                row=bestMove.row;
+                                column=bestMove.column;
+                                board[row][column]=computer;
+                            }
+                            system("cls");//to refresh the board
+                            drawboard();
+                            status=checkwin(board);
+                            if(status==10)
+                            {
+                                p2win++;
+                                system("cls");
+                                drawboard();
+                                printf("\n" padding yellow "Computer" RESET COLOR_GREEN  " WINS!" RESET);
+                                printf("\n" padding cyan "%s" RESET " is a " RESET COLOR_RED   "LOSER!\n" RESET, player1);
+                                break;
+                            }         
+                            if(status==-10)
+                            {
+                                p1win++;
+                                system("cls");
+                                drawboard();
+                                printf("\n" padding cyan "%s" RESET COLOR_GREEN  " WINS!" RESET, player1);
+                                printf("\n" padding yellow "Computer" RESET " is a " RESET COLOR_RED   "LOSER!\n" RESET);
+                                break;
+                            }         
+                            if(status==0 && isMovesLeft(board)==false)
+                            {
+                                draw++;
+                                system("cls");
+                                drawboard();
+                                printf("\n" padding white "It's a Draw!" RESET );
+                                break;         
+                            }
+                            player++;
+                        } //end of inner while(1) loop
+                    
+                        gamerun2++;
+                        printf("\n" padding brightblue "Do you want to play another round? (y/n): ");
+                        fflush(stdin); 
+                        scanf(" %c", &replaychoice);
+                        if(replaychoice!='y' && replaychoice!='Y' && replaychoice!='n' && replaychoice!='N')
+                        { 
+                            printf("\n" padding COLOR_RED "INVALID CHOICE! GOING TO MAIN MENU\n" RESET);
+                            system("pause");
+                            getchar();
+                            system("cls");
+                            main();
+                        }
+                    }
+                    while(replaychoice == 'y' || replaychoice == 'Y');//if the condition is true it starts from the start of the do loop if false it exits
+                    //do while loop false vayera  exit vayepaxi chai yo code vetera run hunxa
+                    fprintf(file, "%s wins: %d\n", player1, p1win);
+                    fclose(file);
+                    system("pause");
+                    printf("\n" padding pink"Thank you for playing TicTacToe!\n");
+                    getchar();
+                    system("cls");
+                    main();
+                    break;
                 }
             }
-            while(replaychoice == 'y' || replaychoice == 'Y');//if the condition is true it starts from the start of the do loop if false it exits
-            //do while loop false vayera  exit vayepaxi chai yo code vetera run hunxa
-            fprintf(file, "%s wins: %d\n", player1, p1win);
-            fclose(file);
-            system("pause");
-            printf("\n" padding pink"Thank you for playing TicTacToe!\n");
-            getchar();
-            system("cls");
-            main();
-            
-            
-        case 3:
+        }
+        
+        case 3: 
+        {
             leaderboard();
             printf("\n" padding "Press any key to return to the main menu...");
             getchar(); //Wait for user input
@@ -738,18 +991,22 @@ int main()
             system("cls");
             main ();
             return 0;//to exit current main
-        
+        }
 
-        case 4:
+        case 4: 
+        {
             printf("\n" padding pink "Thank you for playing TicTacToe!\n");
             system("pause");
             exit(0);
+        }
 
-        default:
+        default: 
+        {
             printf(padding COLOR_RED "Invalid choice!\n" RESET);
             getchar();
             getchar();//consume newline character
             system("cls");
             main();
+        }
     }
 }
