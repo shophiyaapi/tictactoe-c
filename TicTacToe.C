@@ -84,7 +84,25 @@ void display_scoreboard()
 {
     printf("\n" padding bluebackground   pink_slowblink "====== CURRENT SCOREBOARD =======\n" RESET);
     printf(padding bluebackground   cyan   "|  %-*s (X): %d wins  |\n" RESET, namewidth, player1, p1win);
-    printf(padding bluebackground  yellow  "|  %-*s (O): %d wins  |\n" RESET, namewidth,((choice==2)?"Computer":player2), p2win);
+    if(choice==2)
+    {
+        if(choice2==1)
+        {
+            printf(padding bluebackground  yellow  "|  %-*s (O): %d wins  |\n" RESET, namewidth,"computer(Easy)", p2win);
+        }
+        else if(choice2==2)
+        {
+            printf(padding bluebackground  yellow  "|  %-*s(O): %d wins  |\n" RESET, namewidth,"computer(Normal)", p2win);
+        }
+        else if(choice2==3)
+        {
+            printf(padding bluebackground  yellow  "|  %-*s (O): %d wins  |\n" RESET, namewidth,"computer(Hard)", p2win);
+        }
+    }
+    else
+    {
+        printf(padding bluebackground  yellow  "|  %-*s (O): %d wins  |\n" RESET, namewidth,player2, p2win);
+    }
     printf(padding bluebackground  white  "|  %-*s (=): %d draws |\n" RESET, namewidth, "Draws", draw);
     printf(padding bluebackground  pink_slowblink  "=================================\n" RESET);
 }
@@ -396,12 +414,14 @@ void init_board()
     }
 }
 
+//name reuse hanna
+int re=0;
+
 void entername()//NAME
 {
-    int computerwin=0;
-    int humanwin=0;
     if(choice==2)
     {
+        re=1;
         printf("\n" padding cyan "Player (x) Enter Your Name: ");
         scanf("%s", player1);
         for(int i=0;i<count;i++)
@@ -418,6 +438,7 @@ void entername()//NAME
     }
     if(choice==1)
     {
+        re=2;
         printf("\n" padding cyan "Player (x) Enter Your Name: ");
         scanf("%s", player1);
         for(int i=0;i<count;i++)
@@ -495,10 +516,35 @@ int main()
     {
         case 1: 
         {
-            p1win = 0;
-            p2win = 0;
-            draw = 0;
-            entername();
+            if(re!=2)
+            {
+                p1win = 0;
+                p2win = 0;
+                draw = 0;
+                entername();
+            }
+            else
+            {
+                char c;
+                printf(padding pink "Use the same Name?" RESET);
+                scanf(" %c",&c);
+                if(c=='y' || c=='Y')
+                {
+                    printf(padding "using the same names...");
+                }
+                else if(c=='n' || c=='N')
+                {
+                    p1win = 0;
+                    p2win = 0;
+                    draw = 0;
+                    entername();
+                }
+                else
+                {
+                    printf(padding "INVALID! PROCEEDING WITH THE SAME NAMES");
+                }
+            }
+
             do //replay menu do while use garera 
             {       
                 init_board(); // Clears board array for a new match
@@ -560,7 +606,7 @@ int main()
                         system("cls");
                         drawboard();
                         printf("\n" padding cyan "Player %s" RESET COLOR_GREEN  " WINS!" RESET, (player==1)?player1:player2);
-                        printf("\n" padding yellow "Player %s" RESET " is a " RESET COLOR_RED   "LOSER!\n" RESET, (player==2)?player1:player2);             
+                        printf("\n" padding yellow "Player %s" RESET COLOR_RED   " LOST!\n" RESET, (player==2)?player1:player2);             
                         break;
                     }         
                     if(status==2)
@@ -580,17 +626,17 @@ int main()
                 scanf(" %c", &replaychoice);
                 if(replaychoice!='y' && replaychoice!='Y' && replaychoice!='n' && replaychoice!='N')
                 {
-                    printf("\n" padding COLOR_RED "INVALID CHOICE!\n" RESET);
-                    getchar();
+                    printf("\n" padding COLOR_RED "INVALID CHOICE!" RESET);
+                    system("pause");
                     getchar();
                     system("cls");
-                    replaychoice = 'n';
+                    break;
                 }
             }
             while (replaychoice == 'y' || replaychoice == 'Y');//if the condition is true it starts from the start of the do loop if false it exits
             //do while loop false vayera  exit vayepaxi chai yo code vetera run hunxa
+            printf("\n" padding pink"RETURNING TO MAIN MENU!\n");
             system("pause");
-            printf("\n" padding pink"Thank you for playing TicTacToe!\n");
             getchar();
             system("cls");
             break;
@@ -614,12 +660,15 @@ int main()
 
             switch (choice2)
             {
-                case 1: 
+                case 1: //easyy
                 {     
                     p1win = 0;
                     p2win = 0;
                     draw = 0;
-                    entername();
+                    if(re!=1)
+                    {
+                        entername();
+                    }
                     //main game loop
                     do
                     {
@@ -677,7 +726,7 @@ int main()
                                 system("cls");
                                 drawboard();
                                 printf("\n" padding cyan "Player %s" RESET COLOR_GREEN  " WINS!" RESET, (player==1)?player1:"Computer");
-                                printf("\n" padding yellow "Player %s" RESET " is a " RESET COLOR_RED   "LOSER!\n" RESET, (player==2)?player1:"Computer");             
+                                printf("\n" padding yellow "Player %s" RESET COLOR_RED   " LOST!\n" RESET, (player==2)?player1:"Computer");             
                                 break;
                             }         
                             if(status==0 && isMovesLeft(board)==false)
@@ -718,7 +767,10 @@ int main()
                     p1win = 0;
                     p2win = 0;
                     draw = 0;
-                    entername();
+                    if(re!=1)
+                    {
+                        entername();
+                    }
                     //main game loop
                     do
                     {
@@ -805,7 +857,7 @@ int main()
                                 system("cls");
                                 drawboard();
                                 printf("\n" padding cyan "Player %s" RESET COLOR_GREEN  " WINS!" RESET, (player==1)?player1:"Computer");
-                                printf("\n" padding yellow "Player %s" RESET " is a " RESET COLOR_RED   "LOSER!\n" RESET, (player==2)?player1:"Computer");             
+                                printf("\n" padding yellow "Player %s" RESET COLOR_RED   " LOST!\n" RESET, (player==2)?player1:"Computer");             
                                 break;
                             }         
                             if(status==0 && isMovesLeft(board)==false)
@@ -846,7 +898,10 @@ int main()
                     p1win = 0;
                     p2win = 0;
                     draw = 0;
-                    entername();
+                    if(re!=1)
+                    {
+                        entername();
+                    }
                     do //replay menu do while use garera 
                     {
                         init_board(); // Clears board array for a new match
@@ -891,7 +946,7 @@ int main()
                                 system("cls");
                                 drawboard();
                                 printf("\n" padding yellow "Computer" RESET COLOR_GREEN  " WINS!" RESET);
-                                printf("\n" padding cyan "%s" RESET " is a " RESET COLOR_RED   "LOSER!\n" RESET, player1);
+                                printf("\n" padding cyan "%s" RESET COLOR_RED   " LOST!\n" RESET, player1);
                                 break;
                             }         
                             if(status==-10)
@@ -900,7 +955,7 @@ int main()
                                 system("cls");
                                 drawboard();
                                 printf("\n" padding cyan "%s" RESET COLOR_GREEN  " WINS!" RESET, player1);
-                                printf("\n" padding yellow "Computer" RESET " is a " RESET COLOR_RED   "LOSER!\n" RESET);
+                                printf("\n" padding yellow "Computer" RESET COLOR_RED   " LOST!\n" RESET);
                                 updateScore(player1, 1);
                                 break;
                             }         
@@ -939,11 +994,10 @@ int main()
                 }
                 default: 
                 {
-                    printf(padding COLOR_RED "Invalid choice!\n" RESET);
-                    getchar();
+                    printf(padding COLOR_RED "Invalid choice!Going Back to Main Menu\n" RESET);
                     getchar();//consume newline character
                     system("cls");
-                    return 0;
+                    break;
                 }
             }
         break;
